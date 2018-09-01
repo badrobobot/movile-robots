@@ -55,15 +55,10 @@ void loop() {
       Serial.print("infrared ");
       infrared();
     }
-    if(inputString.equals("a")){
-      Serial.print("OK");
-      infrared();
-    }
     else{
       Serial.print("Error no sensor:");
       Serial.print(inputString);
     }
-    
     // clear the string:
     inputString = "";
     stringComplete = false;
@@ -75,12 +70,13 @@ void serialEvent() {
   while (Serial.available()) {
     // get the new byte:
     char inChar = (char)Serial.read();
-    // add it to the inputString:
-    inputString += inChar;
     // if the incoming character is a newline, set a flag so the main loop can
     // do something about it:
     if (inChar == '\n') {
       stringComplete = true;
+    }else{
+      // add it to the inputString:
+      inputString += inChar;
     }
   }
 }
