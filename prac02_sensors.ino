@@ -1,5 +1,4 @@
 /*
-
   Practice 2 
   Bio-Robotics 
   Fi-UNAM
@@ -21,7 +20,7 @@ boolean stringComplete = false;  // whether the string is complete
 
 void setup() {
   // put your setup code here, to run once:
-  pinMode(pin_contact,INPUT);
+  pinMode(pin_contact,INPUT_PULLUP);
   pinMode(pin_photord,INPUT);
   Serial.begin(9600);
   // reserve 200 bytes for the inputString:
@@ -39,25 +38,26 @@ void loop() {
       Serial.print("contact ");
       contact();
     }
-    if(inputString=="shs photora"){
+    else if(inputString=="shs photora"){
       Serial.print("photora ");
       photora();
     }
-    if(inputString=="shs photord"){
+    else if(inputString=="shs photord"){
       Serial.print("photord ");
       photord();
     }
-    if(inputString == "shs temp"){
+    else if(inputString == "shs temp"){
       Serial.print("temp ");
       temp();
     }
-    if(inputString == "shs infrared"){
+    else if(inputString == "shs infrared"){
       Serial.print("infrared ");
       infrared();
     }
     else{
       Serial.print("Error no sensor:");
       Serial.print(inputString);
+      Serial.print(" ");
     }
     // clear the string:
     inputString = "";
