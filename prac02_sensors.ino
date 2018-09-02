@@ -128,3 +128,4 @@ float calibrate_infrarred(int n)
   float distancia_cm = 17569.7 * pow(adc, -1.2062);
   return(distancia_cm);
 }
+
