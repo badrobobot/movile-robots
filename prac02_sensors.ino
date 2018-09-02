@@ -81,6 +81,7 @@ void serialEvent() {
   }
 }
 
+
 void contact() {
   boolean contact = 0;
   contact = digitalRead(pin_contact);
