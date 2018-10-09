@@ -234,3 +234,4 @@ void encoders_scan(){
   Serial.print(digitalRead(encoder1B));
   Serial.println(digitalRead(encoder2B));
 }
+
