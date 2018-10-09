@@ -23,13 +23,12 @@ int pwmValue=0;
 boolean stringComplete = false;  // whether the string is complete
 boolean lastIsNumber = false;
 boolean isFirstNumber = true;
+
 // define variables for encoders 
 int m1State;
 int m1LastState;
 int m2State;
 int m2LastState;
-int counterm1;
-int counterm2;
 void setup() {
   // put your setup code here, to run once:
   pinMode(pwm1_pin , OUTPUT);
@@ -53,13 +52,11 @@ void setup() {
   digitalWrite(motor2_pin,HIGH);
   // Read encoder initial state
   m1LastState = digitalRead(encoder1A);
-  m2LastState = digitalRead(encoder2A);
+  m2LastState = digitalRead(encoder1B);
     
 }
 
 void loop() {
-
-  encoders_calibration();
   
   if(stringComplete){
     
@@ -91,6 +88,7 @@ void loop() {
     }else if(inputString=="MV  "){
       int dis = distancia.toInt();
       int ang = angulo.toInt();      
+      Serial.print("MOVER");
       mover(dis,ang);
     }else{
       Serial.print("Error: ");
@@ -151,65 +149,73 @@ void mover(int dis, int ang){
     // FOWARD
     analogWrite(pwm1_pin,180);
     analogWrite(pwm2_pin,180);
-    while(encoder_steps_walk(dis)){
-      
-    }
-    
+    encoder_steps_walk(dis);
+    analogWrite(pwm1_pin,127);
+    analogWrite(pwm2_pin,127);
+        
   } else if(dis<0 && ang==0){
     // BACKWARDS
+    analogWrite(pwm1_pin,75);
+    analogWrite(pwm2_pin,75);
+    encoder_steps_walk(not_data(dis));
+    analogWrite(pwm1_pin,127);
+    analogWrite(pwm2_pin,127);
+    
   } else if(dis==0 && ang>0){
-    // CLOCKWISE 
+    // CLOCKWISE
+    analogWrite(pwm1_pin,167);
+    analogWrite(pwm2_pin,87);
+    encoder_steps_spin(ang);
+    analogWrite(pwm1_pin,127);
+    analogWrite(pwm2_pin,127);
+     
   } else if(dis==0 && ang<0){
     // COUNTER CLOCKWISE 
-  }  
-  
-  
-  Serial.println("Entre a mover");
-  Serial.println(dis);
-  Serial.println(ang);
-  if(dis==10 &&  ang==0){
-    analogWrite(pwm1_pin,180);
-    analogWrite(pwm2_pin,180);
-    delay(1500);
-    analogWrite(pwm1_pin,127);
-    analogWrite(pwm2_pin,127);
-  }else if(dis==0 && ang==45){
-    analogWrite(pwm1_pin,167);
-    analogWrite(pwm2_pin,87);
-    delay(1250);
-    analogWrite(pwm1_pin,127);
-    analogWrite(pwm2_pin,127);
-  }else if(dis==0 && ang==-45){
-    Serial.println("ESTOY -");
     analogWrite(pwm1_pin,87);
     analogWrite(pwm2_pin,167);
-    delay(1250);
+    encoder_steps_spin(not_data(ang));
     analogWrite(pwm1_pin,127);
     analogWrite(pwm2_pin,127);
-  }else if(dis==10 && ang==45){
-    analogWrite(pwm1_pin,167);
-    analogWrite(pwm2_pin,87);
-    delay(1250);
-    analogWrite(pwm1_pin,180);
-    analogWrite(pwm2_pin,180);
-    delay(1500);
-    analogWrite(pwm1_pin,127);
-    analogWrite(pwm2_pin,127);
+  }  
+}
+
+int not_data(int data){
+  int notData = 0; 
+  if(data<0){
+    notData = -1*data; 
+    return notData;
+  } else {
+    return data;
   }
 }
 
-int encoder_steps_walk(float dis){
-  int z = 0; 
-  z = (int) dis*45.47; 
-  return z
+void encoder_steps_walk(float dis){
+  int z = 0; // Total Steps  
+  int temp_steps = 0; // Now Steps
+  z = (int) dis*45.47;
+
+  while(z != 0){
+    m1State = digitalRead(encoder1A);
+    if(m1State != m1LastState){
+      m1LastState = m1State;
+      z--; 
+    } 
+  } // Exit While
 }
 
 int encoder_steps_spin(float ang){
   int z = 0; 
   z = (int) ang*95.49; 
-  return z
+  
+  while(z != 0){
+    m1State = digitalRead(encoder1A);
+    if(m1State != m1LastState){
+      m1LastState = m1State;
+      z--; 
+    } 
+  } // Exit While
 }
-
+ 
 void encoders_calibration(){
   // Counts the numbers of steps in a revolution of the wheel 
   m1State = digitalRead(encoder1A);
@@ -227,22 +233,4 @@ void encoders_scan(){
   Serial.print(" ");
   Serial.print(digitalRead(encoder1B));
   Serial.println(digitalRead(encoder2B));
-}
-
-void encoderCuadratureM1(){
-  // 
-  if(m1State != m1LastState){
-    if(digitalRead(encoder2A) != m1State){
-      
-    }
-  }
-  Serial.print(digitalRead(encoder1A));
-  Serial.print(digitalRead(encoder1B));
-  Serial.print("    ");
-  Serial.print(digitalRead(encoder2A));
-  Serial.println(digitalRead(encoder2B));
-}
-
-void encoderIncremental(){
-
 }
