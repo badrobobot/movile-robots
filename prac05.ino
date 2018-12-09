@@ -70,7 +70,6 @@
   // Read encoder initial state
   m1LastState = digitalRead(encoder1A);
   m2LastState = digitalRead(encoder1B);
-    
 }
 
 // Algoritmo de evasión de obstáculos
