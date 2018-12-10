@@ -16,12 +16,12 @@
   #define pin_ssi     A1
   #define pin_ssc     A2
   #define pin_A       A3
-  #define pin_B       A4
-  #define pin_C       A5
+  #define pin_B       A5
+  #define pin_C       A4
 
   // Definicion de constantes
   #define ADELANTE mover(AVANCE, 0.0)
-  #define ADELANTE2 mover(AVANCE*5, 0.0)  
+  #define ADELANTE2 mover(AVANCE*3, 0.0)  
   #define ATRAS mover(-AVANCE*10, 0.0)
   #define GIRO_IZQ mover(0.0, -GIRO)
   #define GIRO_DER mover(0.0, GIRO)
@@ -45,9 +45,7 @@
   int par_ssc = 500;
 
   // Variables para seguidor luz
-  int big; 
-  int lit; 
-  byte sec; 
+  long fraccion ;
   
   void setup() {
   // put your setup code here, to run once:
@@ -141,19 +139,27 @@ void loop(){
   if(ssh("ssi")>=par_ssi){ Ssi=1; }else{ Ssi=0; }
   if(ssh("ssd")>=par_ssd){ Ssd=1; }else{ Ssd=0; }
   if(ssh("ssc")>=par_ssc){ Ssc=1; }else{ Ssc=0; }
-  A   = ssh("A");
-  B   = ssh("B");
-  C   = ssh("C");
+  A   = abs (ssh("A") - 1024);
+  B   = abs (ssh("B") - 1024);
+  C   = abs (ssh("C") - 1024);
 
   // Algoritmo para seguir la luz 
-  
+  if(fraccion>7){
+      arrenge();
+      fraccion = 0;
+      Serial.println("ASDJLKJKLASDDASDD");
+  }
+
   // Algoritmo de objeto en centro
   if(Ssc){
     estado = 5;
     ALTO;
   }
 
-  /*
+
+  //Aumenta contador 
+  fraccion++;
+  
   // Maquina de estados 
     switch (estado){
       case 0: // est0
@@ -248,7 +254,7 @@ void loop(){
         break;
         
   } // end case
-*/
+
   // Loop infinito
 } // end Main (loop)
 
@@ -354,46 +360,42 @@ void arrenge(){
   {
     if(B>C)
     {
-      
-      Serial.print("A");
-      Serial.print(",");
-      Serial.println("B");
+      // A, B
+      mover(0,-15);
     }
     else
     {
-      Serial.print("A");
-      Serial.print(",");
-      Serial.println("C");
+      //A, C
+      mover(0,15);
     }
   }
   else if (B>A && B>C)
   {
     if(A>C)
     {
-      Serial.print("B");
-      Serial.print(",");
-      Serial.println("A");
+      //B, A
+      mover(0,-80);
     }
     else
     {
-      Serial.print("B");
-      Serial.print(",");
-      Serial.println("C");
+      //B, C
+      mover(0,-150);
     }
   }
     else if (C>A && C>B)
   {
     if(A>B)
     {
-      Serial.print("C");
-      Serial.print(",");
-      Serial.println("A");
+     //C, A
+      mover(0,80);
     }
     else
     {
+      //C,B
       Serial.print("C");
       Serial.print(",");
       Serial.println("B");
+      mover(0,150);
     }
   }
 }
